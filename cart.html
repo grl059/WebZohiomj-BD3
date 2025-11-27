@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Expensive Online Shop - Миний Сагс</title>
+  <link rel="icon" href="../Photos/LG.png" type="image/x-icon">
+  <style>
+    :root {
+      --primary: #5C4B99;
+      --secondary: #8A7EBF;
+      --light: #f9f9ff;
+      --text: #2d2d2d;
+      --accent: #FF7F50;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: "Segoe UI", Arial, sans-serif; background: var(--light); color: var(--text); }
+    a { text-decoration: none; color: inherit; }
+
+    .header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      text-align: center;
+      padding: 30px 0 20px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    .header h1 { margin-bottom: 10px; font-size: 44px; letter-spacing: 1px; }
+    .navbar { display: flex; justify-content: center; gap: 35px; padding: 15px; flex-wrap: wrap;}
+    .navbar a { color: white; font-weight: bold; font-size: 18px; padding: 5px 10px; }
+    .navbar a:hover { text-decoration: underline; }
+
+    .cart-container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      min-height: 400px;
+    }
+
+    h2 { color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
+
+    .cart-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .cart-table th { text-align: left; padding: 10px; border-bottom: 2px solid #ddd; color: var(--primary); }
+    .cart-table td { padding: 15px 10px; border-bottom: 1px solid #eee; vertical-align: middle; }
+    
+    .cart-img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; }
+    .cart-item-title { font-weight: bold; font-size: 18px; }
+    .cart-price { color: var(--accent); font-weight: bold; }
+
+    .cart-footer {
+      margin-top: 30px;
+      text-align: right;
+    }
+    .total-price {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .btn {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      color: white;
+      transition: 0.3s;
+    }
+    .btn-clear { background: #dc3545; margin-right: 10px; }
+    .btn-clear:hover { background: #c82333; }
+    .btn-checkout { background: var(--primary); }
+    .btn-checkout:hover { background: var(--accent); }
+
+    .empty-msg { text-align: center; margin-top: 50px; font-size: 20px; color: #888; }
+
+    @media (max-width: 600px) {
+      .cart-table thead { display: none; }
+      .cart-table tr { display: flex; flex-direction: column; border-bottom: 2px solid #eee; margin-bottom: 20px; }
+      .cart-table td { display: block; text-align: center; }
+      .cart-img { width: 100px; height: 100px; margin: 0 auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <h1>МИНИЙ САГС</h1>
+    <nav class="navbar">
+      <a href="../index.html">Нүүр</a> <a href="#" onclick="history.back()">← Буцах</a>
+    </nav>
+  </header>
+
+  <div class="cart-container">
+    <h2>Таны сонгосон бүтээгдэхүүнүүд</h2>
+    
+    <div id="cart-content">
+      <table class="cart-table">
+        <thead>
+          <tr>
+            <th>Зураг</th>
+            <th>Бүтээгдэхүүн</th>
+            <th>Үнэ</th>
+            <th>Тоо</th>
+          </tr>
+        </thead>
+        <tbody id="cart-items-body">
+        </tbody>
+      </table>
+
+      <div class="cart-footer">
+        <div class="total-price">Нийт дүн: <span id="total-sum">0</span>₮</div>
+        <button class="btn btn-clear" onclick="clearCart()">Сагс хоослох</button>
+        <button class="btn btn-checkout" onclick="alert('Захиалга амжилттай илгээгдлээ!')">Захиалах</button>
+      </div>
+    </div>
+
+    <div id="empty-cart-msg" class="empty-msg" style="display: none;">
+      Сагс хоосон байна 😔
+    </div>
+
+  </div>
+
+  <script>
+    let cartItems = JSON.parse(localStorage.getItem('myCartProducts')) || [];
+    const tableBody = document.getElementById('cart-items-body');
+    const totalSumEl = document.getElementById('total-sum');
+    const cartContent = document.getElementById('cart-content');
+    const emptyMsg = document.getElementById('empty-cart-msg');
+
+    function renderCart() {
+      if (cartItems.length === 0) {
+        cartContent.style.display = 'none';
+        emptyMsg.style.display = 'block';
+        return;
+      }
+
+      cartContent.style.display = 'block';
+      emptyMsg.style.display = 'none';
+      
+      tableBody.innerHTML = '';
+      let totalSum = 0;
+
+      cartItems.forEach(item => {
+        let rawPrice = item.price.replace(/[^0-9]/g, ''); 
+        let itemTotalPrice = parseInt(rawPrice) * item.qty;
+        totalSum += itemTotalPrice;
+
+        let row = `
+          <tr>
+            <td><img src="${item.img}" class="cart-img" alt="img"></td>
+            <td class="cart-item-title">${item.name}</td>
+            <td class="cart-price">${item.price}</td>
+            <td>x ${item.qty}</td>
+          </tr>
+        `;
+        tableBody.innerHTML += row;
+      });
+
+      totalSumEl.innerText = totalSum.toLocaleString();
+    }
+
+    function clearCart() {
+      localStorage.removeItem('myCartProducts');
+      localStorage.setItem('cartTotal', 0);
+      cartItems = [];
+      renderCart();
+    }
+
+    renderCart();
+  </script>
+
+</body>
+</html>
