@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Тавилга - Онлайн Дэлгүүр</title>
+  <style>
+    :root {
+      --primary: #5C4B99;
+      --secondary: #8A7EBF;
+      --light: #f9f9ff;
+      --text: #2d2d2d;
+      --accent: #FF7F50;
+      --white: #ffffff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--light);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    .header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      text-align: center;
+      padding: 30px 0 20px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .header h1 { margin-bottom: 10px; font-size: 44px; letter-spacing: 1px; }
+
+    .header-cart {
+      position: absolute;
+      top: 25px;
+      right: 30px;
+      background: var(--white);
+      color: var(--primary);
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .header-cart:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+      color: var(--accent);
+    }
+
+    .cart-badge {
+      background-color: var(--accent);
+      color: white;
+      font-size: 13px;
+      padding: 2px 8px;
+      border-radius: 50%;
+      font-weight: bold;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: center;
+      gap: 35px;
+      flex-wrap: wrap;
+      padding: 15px;
+    }
+    .navbar a {
+      color: white;
+      font-weight: bold;
+      font-size: 18px;
+      position: relative;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .navbar a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 0%;
+      height: 3px;
+      background: var(--accent);
+      transition: 0.3s;
+    }
+    .navbar a:hover::after { width: 100%; }
+
+    .container {
+      display: flex;
+      width: 90%;
+      margin: 40px auto;
+      gap: 30px;
+    }
+
+    .sidebar {
+      flex: 1;
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 20px;
+      height: fit-content;
+      min-width: 250px;
+    }
+    .sidebar h3 {
+      margin-bottom: 15px;
+      font-size: 22px;
+      color: var(--primary);
+      text-align: center;
+    }
+    .sidebar ul { list-style: none; }
+    .sidebar li { margin-bottom: 8px; }
+    .sidebar li > ul { margin-left: 15px; margin-top: 5px; }
+    .sidebar a {
+      color: var(--text);
+      padding: 5px 8px;
+      display: block;
+      transition: 0.3s;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .sidebar a:hover {
+      background: var(--primary);
+      color: white;
+      padding-left: 15px;
+    }
+
+    .products { flex: 3; }
+    .products h2 {
+      color: var(--primary);
+      margin-bottom: 25px;
+      margin-top: 40px;
+      font-size: 28px;
+      border-bottom: 3px solid var(--primary);
+      display: inline-block;
+      padding-bottom: 5px;
+    }
+    .products h2:first-of-type {
+      margin-top: 0;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+
+    .product {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    .product:hover {
+      transform: translateY(-7px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .product img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border-radius: 10px;
+    }
+    .product h3 { 
+      font-size: 18px; 
+      margin: 10px 0 8px;
+      min-height: 44px;
+    }
+    .product .description { 
+      font-size: 14px; 
+      color: #666; 
+      margin-bottom: 12px;
+      min-height: 40px;
+    }
+    .product .price { 
+      font-size: 20px; 
+      font-weight: bold; 
+      color: var(--accent); 
+      margin-bottom: 15px;
+      margin-top: auto;
+    }
+
+    .product-stars {
+      color: #FFD700;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .product-stock {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 15px;
+      font-size: 11px;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+    .product-stock.available {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .product-stock.unavailable {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      width: 100%;
+    }
+    button:hover {
+      background: var(--accent);
+      transform: scale(1.05);
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: scale(1);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 500;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6);
+      overflow-y: auto;
+    }
+    .modal.show { display: block; }
+
+    .modal-content {
+      background-color: white;
+      margin: 30% auto;
+      padding: 0;
+      border-radius: 15px;
+      width: 60%;
+      max-width: 320px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 15px 15px 0 0;
+    }
+    .modal-header h2 { margin: 0; }
+    .close-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 28px;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 15px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+
+    .modal-image {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-image img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      max-height: 150px;
+    }
+
+
+
+    .modal-info h3 {
+      color: var(--primary);
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    .modal-info .description {
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    .modal-info .price {
+      font-size: 28px;
+      color: var(--accent);
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .stars {
+      color: #FFD700;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .stock-status {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .stock-available {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .stock-unavailable {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .qty-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .qty-control button {
+      width: 40px;
+      padding: 8px;
+      font-size: 16px;
+    }
+    .qty-control input {
+      width: 60px;
+      padding: 8px;
+      text-align: center;
+      border: 2px solid var(--primary);
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 8px;
+      padding: 10px 15px 12px;
+    }
+    .modal-footer button {
+      flex: 1;
+      padding: 8px;
+      font-size: 12px;
+    }
+
+    .footer {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      text-align: center;
+      padding: 25px 20px;
+      margin-top: 60px;
+      box-shadow: 0 -3px 10px rgba(0,0,0,0.1);
+    }
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    #toast {
+      visibility: hidden;
+      min-width: 250px;
+      margin-left: -125px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 5px;
+      padding: 16px;
+      position: fixed;
+      z-index: 1000;
+      left: 50%;
+      bottom: 30px;
+      font-size: 17px;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+    #toast.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+      .container { flex-direction: column; }
+      .navbar { gap: 15px; font-size: 16px; }
+      .product-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+      .footer-content { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-cart" onclick="alert('Сагс үзэх')">
+    🛒 САГС <span id="cart-count" class="cart-badge">0</span>
+  </div>
+  <h1>"ҮНЭТЭЙ" ЦАХИМ ДЭЛГҮҮР</h1>
+  <nav class="navbar">
+    <a onclick="window.scrollTo(0, 0)">Нүүр</a>
+    <a onclick="document.getElementById('table').scrollIntoView()">АНГИЛАЛ</a>
+    <a>ШИНЭ</a>
+    <a>ХЯМДРАЛ</a>
+    <a>ТУСЛАМЖ</a>
+  </nav>
+</header>
+
+<div class="container">
+  <aside class="sidebar">
+    <h3>Ангилал</h3>
+    <ul>
+      <li><b>Хувцас загвар</b>
+        <ul>
+          <li><a>Эмэгтэй хувцас</a></li>
+          <li><a>Эрэгтэй хувцас</a></li>
+          <li><a>Гутал & Пүүз</a></li>
+          <li><a>Цүнх & Чемодан</a></li>
+          <li><a>Гоёл</a></li>
+        </ul>
+      </li>
+      <li><b>Гоо сайхан ба эрүүл мэнд</b>
+        <ul>
+          <li><a>Арьс арчилгаа</a></li>
+          <li><a>Гоо сайхны хэрэгсэл</a></li>
+          <li><a>Эрүүл мэндийн бүтээгдэхүүн</a></li>
+          <li><a>Үсний бүтээгдэхүүн</a></li>
+          <li><a>Бие арчилгааны бүтээгдэхүүн</a></li>
+        </ul>
+      </li>
+      <li><b>Гэр ахуй</b>
+        <ul>
+          <li><a>Гэр ахуйн цахилгаан бараа</a></li>
+          <li><a>Тавилга</a></li>
+          <li><a>Гал тогоо, хэрэгсэл</a></li>
+        </ul>
+      </li>
+      <li><b>Спорт ба фитнесс</b>
+        <ul>
+          <li><a>Эрүүл хүнс ба нэмэлт</a></li>
+          <li><a>Гутал ба хэрэглэл</a></li>
+          <li><a>Дасгалын дагалдах хэрэгсэл</a></li>
+          <li><a>Спорт хувцас</a></li>
+          <li><a>Аялал & ууланд алхалт</a></li>
+          <li><a>Гадна спортын хэрэгсэл</a></li>
+        </ul>
+      </li>
+      <li><b>Тоглоом</b>
+        <ul>
+          <li><a>Сургалтын тоглоом</a></li>
+        </ul>
+      </li>
+    </ul>
+  </aside>
+
+  <main class="products">
+    <h2 id="table">Ширээ</h2>
+    <div class="product-grid" id="tableGrid"></div>
+
+    <h2 id="sofa">Буйдан</h2>
+    <div class="product-grid" id="sofaGrid"></div>
+
+    <h2 id="bed">Унтлагын Ор</h2>
+    <div class="product-grid" id="bedGrid"></div>
+
+    <h2 id="chair">Сандал</h2>
+    <div class="product-grid" id="chairGrid"></div>
+  </main>
+</div>
+
+<div id="detailModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modalTitle"></h2>
+      <button class="close-btn" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-image" id="galleryContainer"></div>
+      <div class="modal-info">
+        <h3 id="modalProductName"></h3>
+        <div class="stars" id="modalStars"></div>
+        <div class="stock-status" id="modalStock"></div>
+        <div class="description" id="modalDescription"></div>
+        <div class="price" id="modalPrice"></div>
+        <div class="qty-control">
+          <button onclick="decreaseQty()">−</button>
+          <input type="number" id="qtyInput" value="1" min="1">
+          <button onclick="increaseQty()">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="addToCart()">🛒 Сагсанд нэмэх</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<footer class="footer">
+  <div class="footer-content">
+    <div>📞 Холбоо барих: 9999-8888 | ✉️ info@onlineshop.mn</div>
+    <div><b>© 2025 Онлайн дэлгүүр!</b></div>
+  </div>
+</footer>
+
+<script>
+const products = {
+  table: [
+    {
+      id: 1,
+      name: "Зочны өрөөний ширээ",
+      description: "Дугуй кофены ширээ",
+      price: "₮250,000",
+      rating: 4.5,
+      stock: true,
+      images: [
+        "https://tribesigns.uk/cdn/shop/files/Round_Wooden_Coffee_Table_with_2-Tier_Shelves-1.jpg?v=1751888971&width=1200"
+      ]
+    },
+    {
+      id: 2,
+      name: "Хоолны ширээ",
+      description: "6 хүний суудалтай хоолны ширээ",
+      price: "₮980,000",
+      rating: 5,
+      stock: true,
+      images: [
+        "https://www.gobikhangaimebel.mn/images/stories/virtuemart/product/IMG_58032.jpg"
+      ]
+    }
+  ],
+  sofa: [
+    {
+      id: 3,
+      name: "L хэлбэрийн буйдан",
+      description: "Өнгө: Гүн саарал",
+      price: "₮1,350,000",
+      rating: 4,
+      stock: true,
+      images: [
+        "https://www.enzahome.com/frontend/site/images/products/smart-cornet-sofa-set-part.jpg"
+      ]
+    },
+    {
+      id: 4,
+      name: "Хувирдаг буйдан",
+      description: "Онцлог: Ор болж хувирна",
+      price: "₮2,000,000",
+      rating: 4.5,
+      stock: false,
+      images: [
+        "https://www.enzahome.com/frontend/site/images/products/smart-cornet-sofa-set-main_1.jpg",
+        "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop",
+        "https://images.unsplash.com/photo-1578500494198-246f612d03b3?w=400&h=300&fit=crop"
+      ]
+    }
+  ],
+  bed: [
+    {
+      id: 5,
+      name: "Нэг хүний ор",
+      description: "Шүүгээтэй 90x200см ор",
+      price: "₮650,000",
+      rating: 4.8,
+      stock: true,
+      images: [
+        "https://happyhome.mn/web/image/product.product/11047/image_1024?unique=aa2482e",
+        "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop",
+        "https://images.unsplash.com/photo-1578500494198-246f612d03b3?w=400&h=300&fit=crop"
+      ]
+    },
+    {
+      id: 6,
+      name: "Хос ор",
+      description: "2 хүний ор",
+      price: "₮1,850,000",
+      rating: 3.5,
+      stock: true,
+      images: [
+        "https://happyhome.mn/web/image/product.product/9478/image_1024?unique=5481053",
+        "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop",
+        "https://images.unsplash.com/photo-1578500494198-246f612d03b3?w=400&h=300&fit=crop"
+      ]
+    }
+  ],
+  chair: [
+    {
+      id: 7,
+      name: "Ажлын сандал",
+      description: "Онцлог: Тохируулгатай",
+      price: "₮150,000",
+      rating: 4.2,
+      stock: true,
+      images: [
+        "https://mrp.market.mn/product_feature_items/image/000/013/449/tumb.webp?1614063800",
+        "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop",
+        "https://images.unsplash.com/photo-1578500494198-246f612d03b3?w=400&h=300&fit=crop"
+      ]
+    },
+    {
+      id: 8,
+      name: "Gaming сандал",
+      description: "Онцлог: Хөл амраагчтай",
+      price: "₮650,000",
+      rating: 4.7,
+      stock: true,
+      images: [
+        "https://media.diy.com/is/image/KingfisherDigital/neo-black-leather-computer-office-gaming-chair-with-massage-function-footrest~5056293903301_02c_MP?$MOB_PREV$&$width=1200&$height=1200",
+        "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop",
+        "https://images.unsplash.com/photo-1578500494198-246f612d03b3?w=400&h=300&fit=crop"
+      ]
+    }
+  ]
+};
+
+let currentProduct = null;
+
+function generateStars(rating) {
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 !== 0;
+  let stars = '★'.repeat(fullStars);
+  if (hasHalfStar) stars += '☆';
+  return stars;
+}
+
+function renderProducts() {
+  Object.keys(products).forEach(category => {
+    const grid = document.getElementById(category + 'Grid');
+    grid.innerHTML = products[category].map(product => `
+      <div class="product" onclick="openModal(${product.id})">
+        <div>
+          <img src="${product.images[0]}" alt="${product.name}">
+          <div class="product-stars">${generateStars(product.rating)}</div>
+          <h3>${product.name}</h3>
+          <div class="description">${product.description}</div>
+          <div class="product-stock ${product.stock ? 'available' : 'unavailable'}">
+            ${product.stock ? '✓ Үлдэгдэлтэй' : '✗ Дууссан'}
+          </div>
+        </div>
+        <div>
+          <div class="price">${product.price}</div>
+          <button onclick="event.stopPropagation(); addToCartQuick(${product.id})" ${!product.stock ? 'disabled' : ''}>Сагсанд нэмэх</button>
+        </div>
+      </div>
+    `).join('');
+  });
+}
+
+function getAllProducts() {
+  let allProducts = [];
+  Object.keys(products).forEach(category => {
+    allProducts = allProducts.concat(products[category]);
+  });
+  return allProducts;
+}
+
+function openModal(productId) {
+  const allProducts = getAllProducts();
+  currentProduct = allProducts.find(p => p.id === productId);
+  
+  document.getElementById('modalTitle').textContent = currentProduct.name;
+  document.getElementById('modalProductName').textContent = currentProduct.name;
+  document.getElementById('modalDescription').textContent = currentProduct.description;
+  document.getElementById('modalPrice').textContent = currentProduct.price;
+  document.getElementById('modalStars').innerHTML = generateStars(currentProduct.rating) + ' (' + currentProduct.rating + ')';
+  document.getElementById('modalStock').innerHTML = currentProduct.stock ? '✓ Үлдэгдэлтэй' : '✗ Дууссан';
+  document.getElementById('modalStock').className = 'stock-status ' + (currentProduct.stock ? 'stock-available' : 'stock-unavailable');
+  
+  const galleryContainer = document.getElementById('galleryContainer');
+  galleryContainer.innerHTML = `<img id="modalImage" src="${currentProduct.images[0]}" alt="">`;
+  
+  document.getElementById('qtyInput').value = 1;
+  document.getElementById('detailModal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('detailModal').classList.remove('show');
+  currentProduct = null;
+}
+
+function changeImage(event) {
+  const selected = event.target;
+  const mainImage = document.getElementById('modalImage');
+  
+  mainImage.src = selected.src;
+  
+  const thumbnails = document.querySelectorAll('.gallery-thumbnails img');
+  thumbnails.forEach(img => img.classList.remove('active'));
+  selected.classList.add('active');
+}
+
+function increaseQty() {
+  const input = document.getElementById('qtyInput');
+  input.value = parseInt(input.value) + 1;
+}
+
+function decreaseQty() {
+  const input = document.getElementById('qtyInput');
+  if (parseInt(input.value) > 1) {
+    input.value = parseInt(input.value) - 1;
+  }
+}
+
+function addToCart() {
+  if (currentProduct) {
+    const qty = parseInt(document.getElementById('qtyInput').value);
+    showToast(`✅ ${currentProduct.name} x${qty} сагсанд нэмэгдлээ!`);
+    updateCartCount();
+    closeModal();
+  }
+}
+
+function addToCartQuick(productId) {
+  const allProducts = getAllProducts();
+  const product = allProducts.find(p => p.id === productId);
+  showToast(`✅ ${product.name} сагсанд нэмэгдлээ!`);
+  updateCartCount();
+}
+
+function updateCartCount() {
+  const countElement = document.getElementById('cart-count');
+  if (countElement) {
+    let count = parseInt(countElement.textContent) || 0;
+    count++;
+    countElement.textContent = count;
+  }
+}
+
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+window.onclick = function(event) {
+  const modal = document.getElementById('detailModal');
+  if (event.target === modal) {
+    closeModal();
+  }
+};
+
+renderProducts();
+</script>
+
+</body>
+</html> 

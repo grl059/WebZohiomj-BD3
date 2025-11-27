@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Гал тогоо, хэрэгсэл - Онлайн Дэлгүүр</title>
+    <link rel="icon" href="../Photos/LG.png" type="image/x-icon">
+    <style>
+
+        :root {
+            --primary: #5C4B99;
+            --secondary: #8A7EBF;
+            --light: #f9f9ff;
+            --text: #2d2d2d;
+            --accent: #FF7F50;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--light);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-align: center;
+            padding: 30px 0 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        .header h1 { margin-bottom: 10px; font-size: 44px; letter-spacing: 1px; }
+
+        .navbar {
+            display: flex;
+            justify-content: center;
+            gap: 35px;
+            flex-wrap: wrap;
+            padding: 15px;
+        }
+        .navbar a {
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            position: relative;
+            padding: 5px 10px;
+        }
+        .navbar a::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 0%;
+            height: 3px;
+            background: var(--accent);
+            transition: 0.3s;
+        }
+        .navbar a:hover::after { width: 100%; }
+
+        /* Layout */
+        .container {
+            display: flex;
+            width: 90%;
+            margin: 40px auto;
+            gap: 30px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            min-width: 250px;
+        }
+        .sidebar h3 {
+            margin-bottom: 15px;
+            font-size: 22px;
+            color: var(--primary);
+            text-align: center;
+        }
+        .sidebar ul { list-style: none; }
+        .sidebar li { margin-bottom: 8px; }
+        .sidebar li > ul { margin-left: 15px; margin-top: 5px; }
+        .sidebar a {
+            color: var(--text);
+            padding: 5px 8px;
+            display: block;
+            transition: 0.3s;
+            border-radius: 5px;
+        }
+        .sidebar a:hover {
+            background: var(--primary);
+            color: white;
+            padding-left: 15px;
+        }
+
+        /* Products (Main Content) */
+        .products { flex: 3; }
+        .products h2 {
+            color: var(--primary);
+            margin-bottom: 25px;
+            margin-top: 40px;
+            font-size: 28px;
+            border-bottom: 3px solid var(--primary);
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+        .products h2:first-of-type {
+            margin-top: 0;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .product {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .product:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        .product img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+        .product h3 { 
+            font-size: 18px; 
+            margin: 10px 0 8px;
+            min-height: 44px;
+        }
+        .product .description { 
+            font-size: 14px; 
+            color: #666; 
+            margin-bottom: 12px;
+            min-height: 40px;
+        }
+        .product .price { 
+            font-size: 20px; 
+            font-weight: bold; 
+            color: var(--accent); 
+            margin-bottom: 15px;
+            margin-top: auto;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .quantity-control button {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            background: var(--primary);
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .quantity-control button:hover {
+            background: var(--accent);
+        }
+
+        .quantity-control span {
+            font-size: 18px;
+            font-weight: bold;
+            min-width: 30px;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            width: 100%;
+        }
+        button:hover {
+            background: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .cart-badge {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--accent);
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 9999 !important;
+            transition: transform 0.2s;
+        }
+        
+        .cart-badge:hover {
+            transform: scale(1.1);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+            margin-top: 60px;
+            box-shadow: 0 -3px 10px rgba(0,0,0,0.1);
+        }
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container { flex-direction: column; }
+            .navbar { gap: 15px; font-size: 16px; }
+            .product-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+            .footer-content { flex-direction: column; text-align: center; }
+            .sidebar { position: static; min-width: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <h1>"ҮНЭТЭЙ" ЦАХИМ ДЭЛГҮҮР</h1>
+    <nav class="navbar">
+        <a href="../index.html">Нүүр</a>
+        <a href="../Categories.html">АНГИЛАЛ</a>
+        <a href="../new.html">ШИНЭ</a>
+        <a href="../sales.html">ХЯМДРАЛ</a>
+        <a href="../faq.html">ТУСЛАМЖ</a>
+        <a href="../gerel/Sanal.html">САНАЛ</a>
+        <a href="../Burtgel.html">МИНИЙ БҮРТГЭЛ</a>
+    </nav>
+</header>
+
+<div class="container">
+    
+    <aside class="sidebar">
+      <h3>Ангилал</h3>
+      <ul>
+        <li><b>Хувцас загвар</b>
+          <ul>
+            <li><a href="../Fashion/women.html">Эмэгтэй хувцас</a></li>
+            <li><a href="../Fashion/men.html">Эрэгтэй хувцас</a></li>
+            <li><a href="../Fashion/shoes.html">Гутал & Пүүз</a></li>
+            <li><a href="../Fashion/bags.html">Цүнх & Чемодан</a></li>
+            <li><a href="../Fashion/accessories.html">Гоёл</a></li>
+          </ul>
+        </li>
+        <li><b>Гоо сайхан ба эрүүл мэнд</b>
+          <ul>
+            <li><a href="../beautty&health/skincare.html">Арьс арчилгаа</a></li>
+            <li><a href="../beautty&health/makeup.html">Гоо сайхны хэрэгсэл</a></li>
+            <li><a href="../beautty&health/health.html">Эрүүл мэндийн бүтээгдэхүүн</a></li>
+            <li><a href="../beautty&health/haircare.html">Үсний бүтээгдэхүүн</a></li>
+            <li><a href="../beautty&health/bodycare.html">Бие арчилгааны бүтээгдэхүүн</a></li>
+          </ul>
+        </li>
+        <li><b>Гэр ахуй</b>
+          <ul>
+            <li><a href="../gerel/appliances.html">Гэр ахуйн цахилгаан бараа</a></li>
+            <li><a href="../gerel/furniture.html">Тавилга</a></li>
+            <li><a href="../gerel/kitchen.html">Гал тогоо, хэрэгсэл</a></li>
+          </ul>
+        </li>
+        <li><b>Спорт ба фитнесс</b>
+          <ul>
+            <li><a href="../bd1/supplements.html">Эрүүл хүнс ба нэмэлт</a></li>
+            <li><a href="../bd1/shoes.html">Гутал ба хэрэглэл</a></li>
+            <li><a href="../bd1/accessories.html">Дасгалын дагалдах хэрэгсэл</a></li>
+            <li><a href="../bd1/apparel.html">Спорт хувцас</a></li>
+            <li><a href="../bd1/hiking.html">Аялал & ууланд алхалт</a></li>
+            <li><a href="../bd1/outdoorgear.html">Гадна спортын хэрэгсэл</a></li>
+          </ul>
+        </li>
+        <li><b>Тоглоом</b>
+          <ul>
+            <li><a href="../gerel/1.html">Сургалтын тоглоом</a></li>
+          </ul>
+        </li>
+      </ul>
+    </aside>
+
+    <main class="products">
+
+        <h2 id="cooking_tools">Хоол хийх хэрэгсэл</h2>
+        <div class="product-grid" id="cookingGrid">
+            
+            <div class="product" data-name="Хутганы иж бүрдэл" data-price="45000">
+                <div>
+                    <img src="https://kom-uploads.s3.amazonaws.com/store-1488/product-16747--1706331337-w900.jpg" alt="Хутганы иж бүрдэл">
+                    <h3>Хутганы иж бүрдэл</h3>
+                    <div class="description">Материал: Зэвэрдэггүй ган</div>
+                </div>
+                <div>
+                    <div class="price">₮45,000</div>
+                    <div class="quantity-control">
+                        <button onclick="decreaseQty(this)">−</button>
+                        <span>1</span>
+                        <button onclick="increaseQty(this)">+</button>
+                    </div>
+                    <button onclick="addToCart(this, 'Хутганы иж бүрдэл', 45000)">Сагсанд нэмэх</button>
+                </div>
+            </div>
+            
+            <div class="product" data-name="Тогоо, сав ком" data-price="1100000">
+                <div>
+                    <img src="https://kom-uploads.s3.amazonaws.com/store-1488/product-30391--1721461798-w900.jpg" alt="Тогоо, сав ком">
+                    <h3>Тогоо, сав ком</h3>
+                    <div class="description">Материал: Зэвэрдэггүй ган, 5ш ком</div>
+                </div>
+                <div>
+                    <div class="price">₮1,100,000</div>
+                    <div class="quantity-control">
+                        <button onclick="decreaseQty(this)">−</button>
+                        <span>1</span>
+                        <button onclick="increaseQty(this)">+</button>
+                    </div>
+                    <button onclick="addToCart(this, 'Тогоо, сав ком', 1100000)">Сагсанд нэмэх</button>
+                </div>
+            </div>
+
+            <div class="product" data-name="Холигч (Blender)" data-price="120000">
+                <div>
+                    <img src="https://www.ariete.net/media/images/product/main/frullatore-moderna-ariete-585-3-8a3b3948fcfc265607e310aaa346e183.jpg" alt="Холигч (Blender)">
+                    <h3>Холигч (Blender)</h3>
+                    <div class="description">Онцлог: Олон үйлдэлт, 1.5л багтаамж</div>
+                </div>
+                <div>
+                    <div class="price">₮120,000</div>
+                    <div class="quantity-control">
+                        <button onclick="decreaseQty(this)">−</button>
+                        <span>1</span>
+                        <button onclick="increaseQty(this)">+</button>
+                    </div>
+                    <button onclick="addToCart(this, 'Холигч (Blender)', 120000)">Сагсанд нэмэх</button>
+                </div>
+            </div>
+
+        </div>
+
+        <h2 id="containers">Сав хэрэгсэл</h2>
+        <div class="product-grid" id="containerGrid">
+
+            <div class="product" data-name="Савх (Иж бүрдэл)" data-price="13000">
+                <div>
+                    <img src="https://cdnp.cody.mn/spree/images/3165217/small/66082c0c-18c4-4b88-ae87-5e5b40089abb_t700.jpeg" alt="Савх">
+                    <h3>Савх (Иж бүрдэл)</h3>
+                    <div class="description">Онцлог: Авч явахад авсаархан, 2ш</div>
+                </div>
+                <div>
+                    <div class="price">₮13,000</div>
+                    <div class="quantity-control">
+                        <button onclick="decreaseQty(this)">−</button>
+                        <span>1</span>
+                        <button onclick="increaseQty(this)">+</button>
+                    </div>
+                    <button onclick="addToCart(this, 'Савх (Иж бүрдэл)', 13000)">Сагсанд нэмэх</button>
+                </div>
+            </div>
+            
+            <div class="product" data-name="Халбага сэрээний ком" data-price="500000">
+                <div>
+                    <img src="https://cdnp.cody.mn/spree/images/1814380/small/open-uri20230614-3373546-1bh37sq." alt="Халбага сэрээний ком">
+                    <h3>Халбага сэрээний ком</h3>
+                    <div class="description">Олон төрлийн багаж багтсан, 24ш</div>
+                </div>
+                <div>
+                    <div class="price">₮500,000</div>
+                    <div class="quantity-control">
+                        <button onclick="decreaseQty(this)">−</button>
+                        <span>1</span>
+                        <button onclick="increaseQty(this)">+</button>
+                    </div>
+                    <button onclick="addToCart(this, 'Халбага сэрээний ком', 500000)">Сагсанд нэмэх</button>
+                </div>
+            </div>
+
+        </div>
+
+        <h2 id="appliances">Цахилгаан хэрэгсэл</h2>
+        <div class="product-grid" id="appliancesGrid">
+
+             <div class="product" data-name="Гал тогооны комбайн" data-price="120000">
+                <div>
+                    <img src="https://www.ariete.net/media/images/product/main/frullatore-moderna-ariete-585-3-8a3b3948fcfc265607e310aaa346e183.jpg" alt="Blender">
+                    <h3>Гал тогооны комбайн</h3>
+                    <div class="description">Бүх төрлийн хоол хийхэд тохиромжтой</div>
+                </div>
+                <div>
+                    <div class="price">₮120,000</div>
+                    <div class="quantity-control">
+                        <button onclick="decreaseQty(this)">−</button>
+                        <span>1</span>
+                        <button onclick="increaseQty(this)">+</button>
+                    </div>
+                    <button onclick="addToCart(this, 'Гал тогооны комбайн', 120000)">Сагсанд нэмэх</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<div class="cart-badge" id="cartBadge">🛒 0</div>
+
+<footer class="footer">
+    <div class="footer-content">
+        <div>📞 Холбоо барих: 9999-8888 | ✉️ info@onlineshop.mn</div>
+        <div><b>© 2025 Онлайн дэлгүүр!</b></div>
+    </div>
+</footer>
+
+<script>
+    let cart = [];
+
+    // Тоо хэмжээ нэмэх
+    function increaseQty(btn) {
+        const quantitySpan = btn.parentElement.querySelector('span');
+        quantitySpan.textContent = parseInt(quantitySpan.textContent) + 1;
+    }
+
+    // Тоо хэмжээ хасах
+    function decreaseQty(btn) {
+        const quantitySpan = btn.parentElement.querySelector('span');
+        const currentQty = parseInt(quantitySpan.textContent);
+        if (currentQty > 1) {
+            quantitySpan.textContent = currentQty - 1;
+        }
+    }
+
+    // Сагсанд нэмэх функц
+    function addToCart(btn, productName, productPrice) {
+        const quantitySpan = btn.parentElement.parentElement.querySelector('.quantity-control span');
+        const quantity = parseInt(quantitySpan.textContent);
+
+        for (let i = 0; i < quantity; i++) {
+            cart.push({ name: productName, price: productPrice });
+        }
+
+        updateCartBadge();
+        showNotification(`"${productName}" ${quantity} ш сагсанд нэмлээ!`);
+        
+        // Тоо хэмжээг 1 рүү буцаах
+        quantitySpan.textContent = '1';
+    }
+
+    // Сагсын төлөвийг шинэчлэх
+    function updateCartBadge() {
+        const badge = document.getElementById('cartBadge');
+        badge.textContent = `🛒 ${cart.length}`;
+    }
+
+    // Мэдэгдэл харуулах функц
+    function showNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+
+    // Хуудас ачааллахдаа эхлүүлэх
+    document.addEventListener('DOMContentLoaded', function() {
+        updateCartBadge();
+    });
+
+    // Сагсын товч дээр дарахад cart.html руу явах
+    document.getElementById('cartBadge').addEventListener('click', function() {
+        window.location.href = '../cart.html';
+    });
+</script>
+
+</body>
+</html>

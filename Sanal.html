@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expensiveshop - Санал хүсэлт</title>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <style>
+   :root {
+      --primary: #5C4B99;
+      --secondary: #8A7EBF;
+      --light: #f9f9ff;
+      --text: #2d2d2d;
+      --accent: #FF7F50;
+      --white: #ffffff;
+    }
+
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--light);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      text-align: center;
+      padding: 30px 0 20px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    .header h1 { margin-bottom: 10px; font-size: 44px; letter-spacing: 1px; }
+
+    .navbar {
+      display: flex;
+      justify-content: center;
+      gap: 35px;
+      flex-wrap: wrap;
+      padding: 15px;
+    }
+    .navbar a {
+      color: white;
+      font-weight: bold;
+      font-size: 18px;
+      position: relative;
+      padding: 5px 10px;
+    }
+    .navbar a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 0%;
+      height: 3px;
+      background: var(--accent);
+      transition: 0.3s;
+    }
+    .navbar a:hover::after { width: 100%; }
+
+    /* Main Content */
+    main {
+      max-width: 700px;
+      margin: 60px auto;
+      background-color: white;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    main h2 {
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 10px;
+      font-size: 2rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-top: 18px;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px 15px;
+      margin-top: 8px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      background-color: #fafafa;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(46, 46, 78, 0.1);
+      background-color: white;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 140px;
+    }
+
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .submit-btn, .reset-btn {
+      flex: 1;
+      padding: 14px 30px;
+      border-radius: 10px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.3s;
+      border: none;
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    .reset-btn {
+      background: #95a5a6;
+      color: white;
+    }
+
+    .submit-btn:hover, .reset-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .submit-btn:active, .reset-btn:active {
+      transform: translateY(0);
+    }
+
+    .submit-btn:disabled {
+      background: #bdc3c7;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .form-icon {
+      display: inline-block;
+      margin-right: 5px;
+    }
+
+    /* Success Message */
+    .success-message {
+      display: none;
+      background: #2ecc71;
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      animation: slideDown 0.4s ease;
+    }
+
+    .error-message {
+      color: #e74c3c;
+      font-size: 0.85rem;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .error {
+      border-color: #e74c3c !important;
+      background-color: #ffebee !important;
+    }
+
+    .char-count {
+      text-align: right;
+      font-size: 0.85rem;
+      color: #999;
+      margin-top: 5px;
+    }
+
+    /* Footer */
+    .footer {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      text-align: center;
+      padding: 25px 20px;
+      margin-top: 60px;
+      box-shadow: 0 -3px 10px rgba(0,0,0,0.1);
+    }
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      .navbar { gap: 15px; font-size: 16px; }
+      .header h1 { font-size: 32px; }
+      main {
+        margin: 30px 15px;
+        padding: 30px 20px;
+      }
+      main h2 { font-size: 1.6rem; }
+      .footer-content { flex-direction: column; text-align: center; }
+      .form-buttons { flex-direction: column; }
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="header">
+  <h1>"ҮНЭТЭЙ" ЦАХИМ ДЭЛГҮҮР</h1>
+  <nav class="navbar">
+    <a onclick="scrollToSection('featured')">Нүүр</a>
+    <a onclick="showFilter()">АНГИЛАЛ</a>
+    <a onclick="filterByPrice()">ШИНЭ</a>
+    <a onclick="sortByPrice()">ХЯМДРАЛ</a>
+    <a onclick="showAbout()">ТУСЛАМЖ</a>
+  </nav>
+</header>
+
+<main>
+  <div class="success-message" id="successMessage">
+    ✓ Таны санал хүсэлтийг амжилттай хүлээн авлаа. Баярлалаа!
+  </div>
+
+  <h2>Санал хүсэлт илгээх</h2>
+  <p class="subtitle">Бид таны санал хүсэлтийг үнэлж, үйлчилгээгээ сайжруулахад ашиглана</p>
+
+  <form id="feedbackForm">
+    <label for="fullname">
+      <span class="form-icon">👤</span> Таны нэр:
+    </label>
+    <input type="text" id="fullname" name="fullname" placeholder="Жишээ: Бат-Эрдэнэ" required>
+    <div class="error-message" id="nameError">Нэрээ оруулна уу</div>
+
+    <label for="email">
+      <span class="form-icon">📧</span> Имэйл хаяг:
+    </label>
+    <input type="email" id="email" name="email" placeholder="Жишээ: bat@example.com" required>
+    <div class="error-message" id="emailError">Зөв имэйл хаяг оруулна уу</div>
+
+    <label for="subject">
+      <span class="form-icon">📋</span> Саналын төрөл:
+    </label>
+    <select id="subject" name="subject" required>
+      <option value="">-- Сонгоно уу --</option>
+      <option value="Захиалгын асуудал">Захиалгын асуудал</option>
+      <option value="Төлбөрийн асуудал">Төлбөрийн асуудал</option>
+      <option value="Хүргэлтийн санал хүсэлт">Хүргэлтийн санал хүсэлт</option>
+      <option value="Бусад">Бусад</option>
+    </select>
+    <div class="error-message" id="subjectError">Саналын төрлөө сонгоно уу</div>
+
+    <label for="message">
+      <span class="form-icon">💬</span> Санал, хүсэлтээ бичнэ үү:
+    </label>
+    <textarea id="message" name="message" placeholder="Саналаа энд бичнэ үү..." required maxlength="500"></textarea>
+    <div class="char-count"><span id="charCount">0</span>/500</div>
+    <div class="error-message" id="messageError">Санал хүсэлтээ бичнэ үү (хамгийн багадаа 10 тэмдэгт)</div>
+
+    <label>
+      <span class="form-icon">⭐</span> Үнэлгээ:
+    </label>
+    <div class="radio-group">
+      <div class="radio-option">
+        <input type="radio" id="rate5" name="rate" value="5" required>
+        <label for="rate5">Маш сайн</label>
+      </div>
+      <div class="radio-option">
+        <input type="radio" id="rate4" name="rate" value="4">
+        <label for="rate4">Сайн</label>
+      </div>
+      <div class="radio-option">
+        <input type="radio" id="rate3" name="rate" value="3">
+        <label for="rate3">Дунд</label>
+      </div>
+      <div class="radio-option">
+        <input type="radio" id="rate2" name="rate" value="2">
+        <label for="rate2">Муу</label>
+      </div>
+      <div class="radio-option">
+        <input type="radio" id="rate1" name="rate" value="1">
+        <label for="rate1">Маш муу</label>
+      </div>
+    </div>
+    <div class="error-message" id="rateError">Үнэлгээгээ сонгоно уу</div>
+
+    <div class="form-buttons">
+      <button type="submit" class="submit-btn" id="submit-btn">
+        <span id="btn-text">📤 Илгээх</span>
+      </button>
+      <button type="reset" class="reset-btn">Цэвэрлэх</button>
+    </div>
+  </form>
+</main>
+
+<footer class="footer">
+  <div class="footer-content">
+    <div>📞 Холбоо барих: 1234-5678 | ✉️ info@expensiveonlineshop.mn</div>
+    <div><b>© 2025 ExpensiveShop - Бүх эрх хуулиар хамгаалагдсан</b></div>
+  </div>
+</footer>
+
+<script>
+  // EmailJS идэвхжүүлэх - ШИНЭ PUBLIC KEY ОРУУЛНА
+  emailjs.init("fst8W37iX5xd8AVMy"); // EmailJS dashboard-аас Public Key оруулна
+
+  // Character counter
+  const messageInput = document.getElementById('message');
+  const charCount = document.getElementById('charCount');
+
+  messageInput.addEventListener('input', function() {
+    charCount.textContent = this.value.length;
+  });
+
+  // Form validation and submission
+  const form = document.getElementById('feedbackForm');
+  const successMessage = document.getElementById('successMessage');
+  const submitBtn = document.getElementById('submit-btn');
+  const btnText = document.getElementById('btn-text');
+
+  // Ачаалалтын горим
+  function setLoading(isLoading) {
+    if (isLoading) {
+      submitBtn.disabled = true;
+      btnText.innerHTML = '<div class="loading"></div> Илгээж байна...';
+    } else {
+      submitBtn.disabled = false;
+      btnText.textContent = '📤 Илгээх';
+    }
+  }
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Reset errors
+    document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+    document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+    
+    let isValid = true;
+
+    // Validate name
+    const fullname = document.getElementById('fullname');
+    if (fullname.value.trim().length < 2) {
+      fullname.classList.add('error');
+      document.getElementById('nameError').style.display = 'block';
+      isValid = false;
+    }
+
+    // Validate email
+    const email = document.getElementById('email');
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email.value)) {
+      email.classList.add('error');
+      document.getElementById('emailError').style.display = 'block';
+      isValid = false;
+    }
+
+    // Validate subject
+    const subject = document.getElementById('subject');
+    if (subject.value === '') {
+      subject.classList.add('error');
+      document.getElementById('subjectError').style.display = 'block';
+      isValid = false;
+    }
+
+    // Validate message
+    const message = document.getElementById('message');
+    if (message.value.trim().length < 10) {
+      message.classList.add('error');
+      document.getElementById('messageError').style.display = 'block';
+      isValid = false;
+    }
+
+    // Validate rate
+    const rate = document.querySelector('input[name="rate"]:checked');
+    if (!rate) {
+      document.getElementById('rateError').style.display = 'block';
+      isValid = false;
+    }
+
+    if (isValid) {
+      // Ачаалалтын горимд оруулах
+      setLoading(true);
+      
+      // Формын өгөгдлийг цуглуулах
+      const formData = {
+        fullname: fullname.value,
+        email: email.value,
+        subject: subject.value,
+        message: message.value,
+        rate: rate ? rate.value : 'Үнэлгээгүй',
+        timestamp: new Date().toLocaleString('mn-MN')
+      };
+
+      console.log("Илгээх өгөгдөл:", formData);
+
+      // EmailJS ашиглан имэйл илгээх - ШИНЭ SERVICE_ID болон TEMPLATE_ID ашиглана
+      emailjs.send('service_wcjk54k', 'template_gjhmy6g', formData)
+        .then(function(response) {
+          console.log("АМЖИЛТТАЙ:", response);
+          
+          // Show success message
+          successMessage.style.display = 'block';
+          
+          // Reset form
+          form.reset();
+          charCount.textContent = '0';
+          setLoading(false);
+
+          // Scroll to success message
+          successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+          // Hide success message after 5 seconds
+          setTimeout(() => {
+            successMessage.style.display = 'none';
+          }, 5000);
+        }, function(error) {
+          console.log("АЛДАА:", error);
+          alert('Алдаа гарлаа. Дахин оролдоно уу. Алдаа: ' + error.text);
+          setLoading(false);
+        });
+    } else {
+      // Scroll to first error
+      const firstError = document.querySelector('.error');
+      if (firstError) {
+        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  });
+
+  // Real-time validation
+  document.getElementById('fullname').addEventListener('blur', function() {
+    if (this.value.trim().length >= 2) {
+      this.classList.remove('error');
+      document.getElementById('nameError').style.display = 'none';
+    }
+  });
+
+  document.getElementById('email').addEventListener('blur', function() {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailPattern.test(this.value)) {
+      this.classList.remove('error');
+      document.getElementById('emailError').style.display = 'none';
+    }
+  });
+
+  document.getElementById('subject').addEventListener('change', function() {
+    if (this.value !== '') {
+      this.classList.remove('error');
+      document.getElementById('subjectError').style.display = 'none';
+    }
+  });
+
+  document.getElementById('message').addEventListener('blur', function() {
+    if (this.value.trim().length >= 10) {
+      this.classList.remove('error');
+      document.getElementById('messageError').style.display = 'none';
+    }
+  });
+
+  // Rate validation
+  document.querySelectorAll('input[name="rate"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+      if (this.checked) {
+        document.getElementById('rateError').style.display = 'none';
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
